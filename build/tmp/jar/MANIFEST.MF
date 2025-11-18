@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Module-Origin: unknown
+Change: d530658c1b2d6102bdb6c74460ccb093d8b06ac4
+X-Compile-OpenSearch-Version: 3.0.0-SNAPSHOT
+X-Compile-Lucene-Version: 10.1.0
+X-Compile-OpenSearch-Snapshot: true
+Implementation-Title: #opensearch-crypto-generic;unspecified
+Implementation-Version: unspecified
+Built-Status: integration
+Built-By: udabhas
+Built-OS: Mac OS X
+Build-Timezone: Asia/Kolkata
+Build-Date-UTC: 2025-11-18T13:18:04.739222Z
+Build-Date: 2025-11-18T13:18:04.735833Z
+Gradle-Version: 8.14
+Created-By: 21.0.8+9-LTS (Amazon.com Inc.)
+X-Compile-Target-JDK: 21
+X-Compile-Source-JDK: 21
+Build-Java-Version: 21
+

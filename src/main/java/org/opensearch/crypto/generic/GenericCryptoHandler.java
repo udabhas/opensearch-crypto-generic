@@ -5,24 +5,17 @@
 package org.opensearch.crypto.generic;
 
 import org.opensearch.common.crypto.CryptoHandler;
+import org.opensearch.common.crypto.DecryptedRangedStreamProvider;
+import org.opensearch.common.crypto.EncryptedHeaderContentSupplier;
 import org.opensearch.common.crypto.MasterKeyProvider;
 import org.opensearch.common.io.InputStreamContainer;
 
-import javax.crypto.Cipher;
-import javax.crypto.CipherInputStream;
-import javax.crypto.spec.GCMParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.SequenceInputStream;
-import java.security.SecureRandom;
 
 public class GenericCryptoHandler implements CryptoHandler<byte[], byte[]> {
     private final MasterKeyProvider keyProvider;
     private final Runnable onClose;
-    private static final int GCM_TAG_LENGTH = 128;
-    private static final int GCM_IV_LENGTH = 12;
-    private static final String ALGORITHM = "AES/GCM/NoPadding";
 
     public GenericCryptoHandler(MasterKeyProvider keyProvider, Runnable onClose) {
         this.keyProvider = keyProvider;
@@ -30,41 +23,49 @@ public class GenericCryptoHandler implements CryptoHandler<byte[], byte[]> {
     }
 
     @Override
-    public InputStreamContainer createEncryptingStream(InputStreamContainer stream) {
-        try {
-            byte[] iv = new byte[GCM_IV_LENGTH];
-            new SecureRandom().nextBytes(iv);
-            
-            Cipher cipher = Cipher.getInstance(ALGORITHM);
-            SecretKeySpec keySpec = new SecretKeySpec(keyProvider.getKey(), "AES");
-            GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
-            cipher.init(Cipher.ENCRYPT_MODE, keySpec, gcmSpec);
-            
-            InputStream ivStream = new ByteArrayInputStream(iv);
-            InputStream encryptedStream = new CipherInputStream(stream.getInputStream(), cipher);
-            InputStream combined = new SequenceInputStream(ivStream, encryptedStream);
-            
-            return new InputStreamContainer(combined, stream.getContentLength() + GCM_IV_LENGTH + 16, stream.getOffset());
-        } catch (Exception e) {
-            throw new RuntimeException("Encryption failed", e);
-        }
+    public byte[] initEncryptionMetadata() {
+        return new byte[0];
     }
 
     @Override
-    public InputStream createDecryptingStream(InputStream stream) {
-        try {
-            byte[] iv = new byte[GCM_IV_LENGTH];
-            stream.read(iv);
-            
-            Cipher cipher = Cipher.getInstance(ALGORITHM);
-            SecretKeySpec keySpec = new SecretKeySpec(keyProvider.getKey(), "AES");
-            GCMParameterSpec gcmSpec = new GCMParameterSpec(GCM_TAG_LENGTH, iv);
-            cipher.init(Cipher.DECRYPT_MODE, keySpec, gcmSpec);
-            
-            return new CipherInputStream(stream, cipher);
-        } catch (Exception e) {
-            throw new RuntimeException("Decryption failed", e);
-        }
+    public byte[] loadEncryptionMetadata(EncryptedHeaderContentSupplier supplier) throws IOException {
+        return new byte[0];
+    }
+
+    @Override
+    public long adjustContentSizeForPartialEncryption(byte[] cryptoContext, long contentSize) {
+        return contentSize;
+    }
+
+    @Override
+    public long estimateEncryptedLengthOfEntireContent(byte[] cryptoContext, long contentLength) {
+        return contentLength;
+    }
+
+    @Override
+    public long estimateDecryptedLength(byte[] cryptoContext, long contentLength) {
+        return contentLength;
+    }
+
+    @Override
+    public InputStreamContainer createEncryptingStream(byte[] encryptionMetadata, InputStreamContainer stream) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public InputStreamContainer createEncryptingStreamOfPart(byte[] cryptoContext, InputStreamContainer stream, int totalStreams, int streamIdx) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public InputStream createDecryptingStream(InputStream encryptingStream) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public DecryptedRangedStreamProvider createDecryptingStreamOfRange(byte[] cryptoContext, long startPosOfRawContent, long endPosOfRawContent) {
+        long[] adjustedRange = new long[] { startPosOfRawContent, endPosOfRawContent };
+        return new DecryptedRangedStreamProvider(adjustedRange, stream -> stream);
     }
 
     @Override

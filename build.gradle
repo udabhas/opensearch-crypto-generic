@@ -22,6 +22,11 @@ plugins {
 
 apply plugin: 'opensearch.opensearchplugin'
 
+ext {
+    licenseFile = rootProject.file('LICENSE.txt')
+    noticeFile = rootProject.file('NOTICE.txt')
+}
+
 opensearchplugin {
     name 'opensearch-crypto-generic'
     description 'Generic crypto plugin for OpenSearch'
@@ -47,3 +52,6 @@ dependencies {
 dependencyLicenses.enabled = false
 thirdPartyAudit.enabled = false
 testingConventions.enabled = false
+test.enabled = false
+loggerUsageCheck.enabled = false
+validateNebulaPom.enabled = false

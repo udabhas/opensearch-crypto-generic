@@ -1,0 +1,2 @@
+OpenSearch Crypto Generic Plugin
+Copyright OpenSearch Contributors
