@@ -1,0 +1,49 @@
+buildscript {
+    ext {
+        opensearch_version = System.getProperty("opensearch.version", "3.0.0-SNAPSHOT")
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://ci.opensearch.org/ci/dbc/snapshots/maven/" }
+        maven { url "https://ci.opensearch.org/ci/dbc/snapshots/lucene/" }
+    }
+
+    dependencies {
+        classpath "org.opensearch.gradle:build-tools:${opensearch_version}"
+    }
+}
+
+plugins {
+    id 'java'
+    id 'idea'
+}
+
+apply plugin: 'opensearch.opensearchplugin'
+
+opensearchplugin {
+    name 'opensearch-crypto-generic'
+    description 'Generic crypto plugin for OpenSearch'
+    classname 'org.opensearch.crypto.GenericCryptoPlugin'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url "https://ci.opensearch.org/ci/dbc/snapshots/maven/" }
+    maven { url "https://ci.opensearch.org/ci/dbc/snapshots/lucene/" }
+}
+
+compileJava {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+dependencies {
+    compileOnly "org.opensearch:opensearch:${opensearch_version}"
+}
+
+dependencyLicenses.enabled = false
+thirdPartyAudit.enabled = false
+testingConventions.enabled = false
