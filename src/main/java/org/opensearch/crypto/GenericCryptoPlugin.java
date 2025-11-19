@@ -22,6 +22,7 @@ public class GenericCryptoPlugin extends Plugin implements CryptoPlugin<byte[], 
         String keyProviderType,
         Runnable onClose
     ) {
-        return new SimpleCryptoHandler();
+        // Pass the KMS MasterKeyProvider to SimpleCryptoHandler for envelope encryption
+        return new SimpleCryptoHandler(keyProvider);
     }
 }
