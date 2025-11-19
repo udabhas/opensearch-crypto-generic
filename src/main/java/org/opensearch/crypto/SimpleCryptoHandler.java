@@ -88,8 +88,8 @@ public class SimpleCryptoHandler implements CryptoHandler<byte[], byte[]> {
 
             // 1. Generate data key from KMS
             DataKeyPair dataKey = keyProvider.generateDataPair();
-            byte[] plaintextKey = dataKey.getPlaintext();
-            byte[] encryptedKey = dataKey.getEncrypted();
+            byte[] plaintextKey = dataKey.getRawKey();
+            byte[] encryptedKey = dataKey.getEncryptedKey();
             logger.info("[ENCRYPT] Generated KMS data key - plaintext: {} bytes, encrypted: {} bytes", 
                 plaintextKey.length, encryptedKey.length);
 
