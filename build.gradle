@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        opensearch_version = System.getProperty("opensearch.version", "3.0.0-SNAPSHOT")
+        opensearch_version = System.getProperty("opensearch.version", "3.3.2-SNAPSHOT")
     }
 
     repositories {
